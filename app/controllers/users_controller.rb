@@ -1,4 +1,26 @@
 class UsersController < ApplicationController
+  
+  def authenticate
+
+   un = params.fetch("input_username")
+   pw = params.fetch("input_password")
+
+   user = User.where({:username => un}).at(0)
+
+   if user == nil
+      redirect_to("/user_sign_in", {:alert => "No one by that name"})
+   else
+     if user.authenticate(pw)
+        session.store(:user_id, user.id)
+
+        redirect_to("/", { :notice => "Welcome back" + user.username })
+      else
+       redirect_to("/user_sign_in", {:alert => "nope"})
+     end
+    end
+  end
+
+  
   def toast_cookies
     reset_session
 
